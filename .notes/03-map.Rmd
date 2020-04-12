@@ -1,0 +1,263 @@
+---
+title: "03-map"
+output: html_document
+editor_options: 
+  chunk_output_type: console
+---
+
+## Functions
+
+```{r}
+my_function <- function(){
+  
+}
+```
+
+```{r}
+my_sq <- function(x) {
+  return(x ** 2)
+}
+```
+
+```{r}
+my_sq(4)
+```
+
+```{r}
+stopifnot(my_sq(4) == 15)
+```
+
+```{r}
+avg_2 <- function(x, y) {
+  return(
+    (x + y) / 2
+  )
+}
+```
+
+
+```{r}
+avg_2(10, 20)
+```
+
+## Creating a dataframe
+
+```{r}
+df_b <- data.frame(
+  a = c(10, 20, 30),
+  b = c(20, 30, 40)
+)
+
+df_b
+```
+
+```{r}
+library(tibble)
+df_t <- tibble::tibble(
+  a = c(10, 20, 30),
+  b = c(20, 30, 40)
+)
+df_t
+```
+
+```{r}
+library(tibble)
+df_t <- tibble::tribble(
+  ~a, ~b,
+  10, 20,
+  20, 30,
+  30, 40
+)
+df_t
+```
+
+## Mapping values
+
+```{r}
+library(purrr)
+```
+
+```{r}
+purrr::map(.x = df_b$a, .f = my_sq)
+```
+
+```{r}
+purrr::map_dbl(.x = df_b$a, .f = my_sq)
+```
+
+```{r}
+purrr::map_int(.x = df_b$a, .f = my_sq)
+```
+
+```{r}
+100
+```
+
+```{r}
+100L
+```
+
+```{r}
+my_exp <- function(x, e){
+  return(x ** e)
+}
+```
+
+```{r}
+my_exp(2, e = 10)
+```
+
+
+```{r}
+purrr::map_dbl(df_b$a, .f = my_exp, e = 10)
+```
+
+### Mapping on a dataframe
+
+```{r}
+print_me <- function(x) {
+  print(x)
+}
+```
+
+```{r}
+print_me('hello')
+```
+
+```{r}
+x <- purrr::map(df_b, print_me)
+x
+```
+
+```{r}
+purrr::map(df_b, class)
+```
+
+```{r}
+class(df_b$a)
+```
+
+### Function to mapping
+
+```{r}
+avg_3 <- function(x, y, z) {
+  return(
+    (x + y + z) / 3
+  )
+}
+```
+
+```{r}
+avg_3(0, 5, 10)
+```
+
+```{r}
+purrr::map(df_b, avg_3)
+```
+
+```{r}
+avg_3_single <- function(col) {
+  x = col[1]
+  y = col[2]
+  z = col[3]
+  return(
+    (x + y + z) / 3
+  )
+}
+```
+
+```{r}
+avg_3_single(c(10, 20, 30))
+```
+
+```{r}
+avg_2 <- function(x, y) {
+  return(
+    (x + y) / 2
+  )
+}
+```
+
+```{r}
+df_b
+```
+
+
+```{r}
+(df_b$a + df_b$b) / 2
+```
+
+```{r}
+avg_2(df_b$a, df_b$b)
+```
+
+
+```{r}
+avg_2_mod <- function(x, y) {
+  if (x == 20) {
+    return(
+      NA
+    )
+  } else {
+    return(
+      (x + y) / 2
+    )
+  }
+}
+```
+
+```{r}
+avg_2_mod(df_b$a, df_b$b)
+```
+
+```{r}
+purrr::map2(.x = df_b$a, .y = df_b$b, .f = avg_2_mod)
+```
+
+```{r}
+purrr::map2_dbl(.x = df_b$a, .y = df_b$b, .f = avg_2_mod)
+```
+
+```{r}
+df_t2 <- tibble::tribble(
+  ~a, ~b, ~c,
+  10, 20, 30,
+  20, 30, 40,
+  30, 40, 50
+)
+df_t2
+```
+
+```{r}
+purrr::pmap(
+  .l = list(x = df_t2$a,
+            y = df_t2$b,
+            z = df_t2$c
+  ),
+  .f = avg_3
+)
+```
+
+
+## Base R
+
+```{r}
+# purrr::map(.x = df_b$a, .f = my_sq)
+lapply(df_b$a, my_sq)
+```
+
+```{r}
+sapply(df_b$a, my_sq)
+```
+
+```{r}
+vapply(X = df_b$a, FUN = my_sq, FUN.VALUE = numeric(1))
+```
+
+```{r}
+apply(df_b, MARGIN = 2, class)
+```
+
+```{r}
+mapply(FUN = avg_3, x = df_t2$a, y = df_t2$b, df_t2$c)
+```

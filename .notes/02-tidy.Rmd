@@ -1,0 +1,185 @@
+---
+title: "02-tidy"
+output: html_document
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r}
+library(readr)
+library(tidyr)
+library(dplyr)
+library(here)
+```
+
+```{r}
+pew <- readr::read_csv(here::here("data", "pew.csv"))
+pew
+```
+
+```{r}
+head(pew)
+```
+
+## Column headers are values, not variable names.
+
+```{r}
+pew %>%
+  tidyr::pivot_longer(cols = -religion)
+```
+
+```{r}
+pew_tidy <- pew %>%
+  tidyr::pivot_longer(cols = -religion, names_to = "income", values_to = "count")
+```
+
+
+```{r}
+billboard <- readr::read_csv(here::here("data", "billboard.csv"))
+```
+
+```{r}
+head(billboard)
+```
+
+```{r}
+billboard_tidy <- billboard %>%
+  tidyr::pivot_longer(cols = wk1:wk76,
+                      names_to = "week",
+                      values_to = "rank")
+```
+
+```{r}
+billboard_tidy
+```
+
+
+```{r}
+billboard_tidy <- billboard %>%
+  tidyr::pivot_longer(cols = wk1:wk76,
+                      names_to = "week",
+                      values_to = "rank",
+                      names_prefix = "wk",
+                      values_drop_na = TRUE
+                      )
+billboard_tidy
+```
+
+```{r}
+billboard_tidy %>%
+  dplyr::group_by(week) %>%
+  summarize(avg_rnk = mean(rank))
+```
+
+```{r}
+billboard_tidy %>%
+  dplyr::mutate(week = as.numeric(week)) %>%
+  dplyr::group_by(week) %>%
+  summarize(avg_rnk = mean(rank))
+```
+
+
+## Multiple variables are stored in one column
+
+```{r}
+ebola <- readr::read_csv(here::here("data", "country_timeseries.csv"))
+ebola
+```
+
+```{r}
+ebola_tidy <-ebola %>%
+  tidyr::pivot_longer(
+    cols = tidyselect::contains("_"),
+    names_to = c("type", "country"),
+    names_pattern = "(.*)_(.*)",
+    values_to = "count"
+)
+```
+
+```{r}
+ebola_tidy
+```
+
+
+```{r}
+ebola_tidy <-ebola %>%
+  tidyr::pivot_longer(
+    cols = !Date:Day,
+    names_to = c("type", "country"),
+    names_pattern = "(.*)_(.*)",
+    values_to = "count"
+)
+ebola_tidy
+```
+
+```{r}
+ebola_tidy <-ebola %>%
+  tidyr::pivot_longer(
+    cols = Cases_Guinea:tidyselect::last_col(),
+    names_to = c("type", "country"),
+    names_pattern = "(.*)_(.*)",
+    values_to = "count"
+)
+ebola_tidy
+```
+
+## Variables are stored in both rows and columns.
+
+
+```{r}
+weather <- readr::read_csv(here::here("data", "weather.csv"))
+weather
+```
+
+```{r}
+weather_long <- weather %>%
+  tidyr::pivot_longer(
+    cols = tidyselect::starts_with("d"),
+    names_to = "day",
+    names_prefix = "d",
+    values_to = "temperature",
+    values_drop_na = TRUE
+  )
+weather_long
+```
+
+```{r}
+weather_tidy <- weather_long %>%
+  tidyr::pivot_wider(names_from = "element", values_from = "temperature")
+```
+
+## Exercises
+
+1. Tidy the `who` datadset from the `tidyr` package by making it longer and breaking up the columns from `new_sp_m014` where
+
+- "diagnosis" = `sp`
+- "gender" = m
+- "age" = 014
+
+```{r}
+who
+```
+
+
+```{r}
+who %>% pivot_longer(
+  cols = _____,
+  names_to = c(_____),
+  names_pattern = "new_?(.*)_(.)(.*)",
+  values_to = _____,
+  values_drop_na = TRUE
+)
+```
+
+2. pivot wider the `us_rent_income`, hint: you can pass in multiple values for `values_from`
+
+```{r}
+us_rent_income
+```
+
+
+```{r}
+us_rent_income %>%
+  pivot_wider(names_from = _____, values_from = c(_____, _____))
+```
+

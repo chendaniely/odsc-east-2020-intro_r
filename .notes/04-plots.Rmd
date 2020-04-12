@@ -1,0 +1,101 @@
+---
+title: "04-plots"
+output: html_document
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r}
+library(ggplot2)
+```
+
+```{r}
+ggplot2::diamonds
+```
+
+```{r}
+ggplot(data = diamonds,
+       mapping = aes(x = carat, y = price))
+```
+
+```{r}
+ggplot(data = diamonds) +
+  geom_point(mapping = aes(x = carat, y = price))
+```
+
+```{r}
+ggplot(data = diamonds,
+       mapping = aes(x = carat, y = price)) +
+  geom_point()
+```
+
+```{r}
+ggplot(data = diamonds,
+       mapping = aes(x = color)) +
+  geom_bar()
+```
+
+```{r}
+ggplot(data = diamonds,
+       mapping = aes(x = color)) +
+  geom_bar(stat = "count")
+```
+
+```{r}
+ggplot(data = diamonds,
+       mapping = aes(x = color)) +
+  geom_bar(stat = "count", aes(color = cut))
+```
+
+```{r}
+ggplot(data = diamonds,
+       mapping = aes(x = color)) +
+  geom_bar(stat = "count", aes(fill = cut))
+```
+
+```{r}
+ggplot(data = diamonds,
+       mapping = aes(x = color)) +
+  geom_bar(stat = "count", aes(fill = cut), position = "dodge")
+```
+
+```{r}
+ggplot(data = diamonds) +
+  geom_bar(mapping = aes(x = color,
+                         fill = cut),
+           stat = "count",
+           position = "dodge")
+```
+
+```{r}
+ggplot(data = diamonds) +
+  geom_bar(mapping = aes(x = color,
+                         fill = cut),
+           stat = "count",
+           position = "dodge",
+           fill = "lightblue")
+```
+
+## Multiple layers
+
+```{r}
+diamonds %>%
+  head(1000) %>%
+  ggplot() +
+  geom_violin(aes(x = cut, y = price)) +
+  geom_point(aes(x = cut, y = price))
+```
+
+## Facets
+
+```{r}
+ggplot(diamonds) +
+  geom_point(aes(x = carat, y = price, color = color)) +
+  facet_wrap(~ cut)
+```
+
+```{r}
+ggplot(diamonds) +
+  geom_point(aes(x = carat, y = price, color = color)) +
+  facet_grid(cut ~ clarity)
+```
