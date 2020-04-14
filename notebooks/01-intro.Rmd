@@ -1,0 +1,238 @@
+---
+title: "Intro"
+output: html_document
+---
+
+```{r}
+library(tidyverse)
+library(here)
+```
+
+```{r}
+read_tsv(here("data", "gapminder.tsv"))
+```
+
+```{r}
+df_t <- read_tsv(here("data", "gapminder.tsv"))
+```
+
+
+```{r}
+df_t <- read_tsv(here("data", "gapminder.tsv"))
+```
+
+
+```{r}
+df_t <- readr::read_tsv(here::here("data", "gapminder.tsv"))
+```
+
+```{r}
+df_t
+```
+
+## base
+
+```{r}
+df_b <- read.delim(here::here("data", "gapminder.tsv"),
+                   sep = "\t"
+                   )
+```
+
+## checks
+
+```{r}
+class(df_t)
+```
+
+```{r}
+class(df_b)
+```
+
+```{r}
+names(df_t)
+```
+
+```{r}
+colnames(df_t)
+```
+
+```{r}
+names(df_b)
+```
+
+```{r}
+head(df_t)
+```
+
+
+```{r}
+tail(df_b)
+```
+
+```{r}
+class(df_b$country)
+```
+
+```{r}
+class(df_t$country)
+```
+
+```{r}
+df_b <- read.delim(here::here("data", "gapminder.tsv"),
+                   sep = "\t",
+                   stringsAsFactors = FALSE
+                   )
+```
+
+```{r}
+class(df_b$country)
+```
+
+## selecting
+
+
+```{r}
+slice(df_t, 1:10)
+```
+
+```{r}
+df_t %>%
+  dplyr::slice(1:10)
+```
+
+```{r}
+df_t[1:10, ]
+```
+
+```{r}
+df_b[1, ]
+```
+
+```{r}
+df_t %>%
+  dplyr::select(country)
+```
+
+```{r}
+df_t %>%
+  dplyr::select(country, pop)
+```
+
+```{r}
+df_t %>%
+  dplyr::select(country:pop)
+```
+
+```{r}
+df_t %>%
+  dplyr::select(-country)
+```
+
+```{r}
+df_t_subset <- df_t %>%
+  dplyr::select(-country)
+```
+
+```{r}
+df_b[ , 'continent']
+```
+
+```{r}
+df_b[ , 'continent', drop=FALSE]
+```
+
+```{r}
+df_b[ , c('continent', 'pop')]
+```
+
+## boolean subsets
+
+```{r}
+df_t %>%
+  dplyr::filter(country == "United States")
+```
+
+```{r}
+df_t %>%
+  dplyr::filter(country == "United States",
+                year == 2007)
+```
+
+```{r}
+df_t[df_t$country == "United States" & df_t$year == 2007, ]
+```
+
+## groupby
+
+```{r}
+df_b %>%
+  dplyr::group_by(year) %>%
+  dplyr::summarise(avg_life_exp = mean(lifeExp, na.rm = TRUE))
+```
+
+```{r}
+df_b %>%
+  dplyr::group_by(year, continent) %>%
+  dplyr::summarise(avg_life_exp = mean(lifeExp, na.rm = TRUE),
+                   std_life_exp = sd(lifeExp, na.rm = TRUE))
+```
+
+## data.table
+
+```{r}
+library(data.table)
+```
+
+```{r}
+df_d <- data.table::fread(here::here("data", "gapminder.tsv"), sep = "\t")
+```
+
+```{r}
+df_d[, country]
+```
+
+```{r}
+df_d[, list(country)]
+```
+
+```{r}
+df_d[, list(country, pop)]
+```
+
+```{r}
+df_d[, .(country, pop)]
+```
+
+```{r}
+df_d[country == "United States" & year == 1952]
+```
+
+```{r}
+df_d[, .(avg_life = mean(lifeExp)), by = .(year, continent)]
+```
+
+
+
+## Exercise
+
+```{r}
+head(mtcars)
+```
+
+1. Filter rows by `cyl == 6` and `disp > 150`
+
+```{r}
+mtcars %>%
+  dplyr::filter(cyl == 6, disp > 150)
+```
+
+
+
+2. What is the average `mpg` for each value of `cyl`, `gear` and `carb`?
+
+```{r}
+mtcars %>%
+  dplyr::group_by(cyl, gear, carb) %>%
+  dplyr::summarise(avg_mpg = mean(mpg))
+```
+
